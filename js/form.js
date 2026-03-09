@@ -1,34 +1,83 @@
 
-function createForm() {
-  var $form = $("<form></form>");
+var items = groceryItems; 
+var editId = null; 
 
-  $form.html(`
-    <h2>grocery bud</h2>
-    <div class="form-control">
-      <input
-        type="text"
-        class="form-input"
-        placeholder="e.g. eggs"
-      />
-      <button type="submit" class="btn">
-        add item
-      </button>
-    </div>
-  `);
 
-  $form.on("submit", function (e) {
-    e.preventDefault();
-    var $input = $form.find(".form-input");
-    var value = $.trim($input.val());
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
 
-    if (!value) {
-      alert("Please provide value");
-      return;
-    }
 
-    addItem(value);
-    $input.val("");
+function addItem(itemName) {
+  var newItem = {
+    name: itemName,
+    completed: false,
+    id: generateId(),
+  };
+  items.push(newItem);
+  render();
+  setTimeout(() => alert("Item Added Successfully!"), 0);
+}
+
+
+function removeItem(itemId) {
+  items = $.grep(items, function (item) {
+    return item.id !== itemId;
   });
 
-  return $form;
+  if (editId === itemId) editId = null; 
+  render();
+  setTimeout(() => alert("Item Deleted Successfully!"), 0);
 }
+
+
+function editCompleted(itemId) {
+  items = $.map(items, function (item) {
+    if (item.id === itemId) {
+      return $.extend({}, item, { completed: !item.completed });
+    }
+    return item;
+  });
+  render();
+}
+
+
+function setEditItem(itemId) {
+  editId = itemId;
+  render(); 
+}
+
+
+function updateItemName(newName) {
+  items = $.map(items, function (item) {
+    if (item.id === editId) {
+      return $.extend({}, item, { name: newName });
+    }
+    return item;
+  });
+  editId = null; 
+  render();
+  setTimeout(() => alert("Item Updated Successfully!"), 0);
+}
+
+
+function render() {
+  var $app = $("#app");
+  $app.empty();
+
+
+  var itemToEdit = editId 
+    ? items.find(function(i) { return i.id === editId; }) 
+    : null;
+
+ 
+  var $formElement = createForm(editId, itemToEdit);
+  var $itemsElement = createItems(items);
+
+  $app.append($formElement);
+  $app.append($itemsElement);
+}
+
+$(document).ready(function () {
+  render();
+});
