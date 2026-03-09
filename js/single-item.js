@@ -22,9 +22,8 @@ function createSingleItem(item) {
   });
 
   
-  $div.find('.remove-btn').on("click", function() {
-    
-    removeItem(item.id); 
+  $div.find(".remove-btn").on("click", function () {
+    removeItem(item.id);
   });
 
   return $div;
