@@ -1,31 +1,33 @@
+var items = groceryItems;
 
-var items = groceryItems; 
 
 function editCompleted(itemId) {
   items = $.map(items, function (item) {
     if (item.id === itemId) {
-  
       return $.extend({}, item, { completed: !item.completed });
     }
     return item;
   });
-  render(); 
+  render();
+}
+
+
+function removeItem(itemId) {
+  items = $.grep(items, function (item) {
+    return item.id !== itemId;
+  });
+  render();
+ 
+  setTimeout(function () {
+    alert("Item Deleted Successfully!");
+  }, 0);
 }
 
 
 function render() {
   var $app = $("#app");
   $app.empty();
-
   var $itemsElement = createItems(items);
-
-  $itemsElement.find('.single-item').each(function(index) {
-    var itemId = items[index].id;
-    $(this).find('input[type="checkbox"]').on('change', function() {
-      editCompleted(itemId);
-    });
-  });
-
   $app.append($itemsElement);
 }
 
