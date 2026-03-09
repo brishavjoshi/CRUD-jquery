@@ -13,10 +13,11 @@ function addItem(itemName) {
     completed: false,
     id: generateId(),
   };
-  items.push(newItem);
-  render();
   
-
+  items.push(newItem);
+  render(); 
+  
+  
   setTimeout(function () {
     alert("Item Added Successfully!");
   }, 0);
@@ -24,9 +25,11 @@ function addItem(itemName) {
 
 
 function removeItem(itemId) {
+  
   items = $.grep(items, function (item) {
     return item.id !== itemId;
   });
+  
   render();
   
   setTimeout(function () {
@@ -34,31 +37,34 @@ function removeItem(itemId) {
   }, 0);
 }
 
+
 function editCompleted(itemId) {
+ 
   items = $.map(items, function (item) {
     if (item.id === itemId) {
       return $.extend({}, item, { completed: !item.completed });
     }
     return item;
   });
+  
   render();
 }
 
-// 6. UI: Render App
+
 function render() {
   var $app = $("#app");
-  $app.empty(); // Clear existing DOM to prevent duplication
+  $app.empty(); 
 
-  // Create components
+  
   var $formElement = createForm();
   var $itemsElement = createItems(items);
 
-  // Inject into the DOM
+  
   $app.append($formElement);
   $app.append($itemsElement);
 }
 
-// 7. Initialize: Wait for Document Ready
+
 $(document).ready(function () {
   render();
 });
