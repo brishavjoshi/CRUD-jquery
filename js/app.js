@@ -1,5 +1,38 @@
+
 var items = groceryItems;
 
+
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+
+function addItem(itemName) {
+  var newItem = {
+    name: itemName,
+    completed: false,
+    id: generateId(),
+  };
+  items.push(newItem);
+  render();
+  
+
+  setTimeout(function () {
+    alert("Item Added Successfully!");
+  }, 0);
+}
+
+
+function removeItem(itemId) {
+  items = $.grep(items, function (item) {
+    return item.id !== itemId;
+  });
+  render();
+  
+  setTimeout(function () {
+    alert("Item Deleted Successfully!");
+  }, 0);
+}
 
 function editCompleted(itemId) {
   items = $.map(items, function (item) {
@@ -11,26 +44,21 @@ function editCompleted(itemId) {
   render();
 }
 
-
-function removeItem(itemId) {
-  items = $.grep(items, function (item) {
-    return item.id !== itemId;
-  });
-  render();
- 
-  setTimeout(function () {
-    alert("Item Deleted Successfully!");
-  }, 0);
-}
-
-
+// 6. UI: Render App
 function render() {
   var $app = $("#app");
-  $app.empty();
+  $app.empty(); // Clear existing DOM to prevent duplication
+
+  // Create components
+  var $formElement = createForm();
   var $itemsElement = createItems(items);
+
+  // Inject into the DOM
+  $app.append($formElement);
   $app.append($itemsElement);
 }
 
+// 7. Initialize: Wait for Document Ready
 $(document).ready(function () {
   render();
 });
