@@ -29,7 +29,6 @@ function render() {
   $app.append($itemsElement);
 }
 
-// 4. Initialize App
 $(document).ready(function () {
   render();
 });
