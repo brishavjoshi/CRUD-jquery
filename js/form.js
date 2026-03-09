@@ -1,83 +1,38 @@
+function createForm(editId, itemToEdit) {
+  var $form = $("<form></form>");
 
-var items = groceryItems; 
-var editId = null; 
+  $form.html(`
+        <h2 class="form-title">grocery list helper</h2>
+        <div class ='form-control'>
+        <input
+        type = "text"
+        class= "form-input"
+        placeholder = "e.g. eggs"
+        value="${itemToEdit ? itemToEdit.name : ""}"
+        />
+        <button type ="submit" class ="form-button">
+         ${editId ? "edit item" : "add item"}
+        </button>
+        </div>
+        `);
 
-
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-
-function addItem(itemName) {
-  var newItem = {
-    name: itemName,
-    completed: false,
-    id: generateId(),
-  };
-  items.push(newItem);
-  render();
-  setTimeout(() => alert("Item Added Successfully!"), 0);
-}
-
-
-function removeItem(itemId) {
-  items = $.grep(items, function (item) {
-    return item.id !== itemId;
-  });
-
-  if (editId === itemId) editId = null; 
-  render();
-  setTimeout(() => alert("Item Deleted Successfully!"), 0);
-}
-
-
-function editCompleted(itemId) {
-  items = $.map(items, function (item) {
-    if (item.id === itemId) {
-      return $.extend({}, item, { completed: !item.completed });
+  $form.on("submit", function (e) {
+    e.preventDefault();
+    var $input = $form.find(".form-input");
+    var value = $.trim($input.val());
+    if (!value) {
+      alert("Please provide value");
+      return;
     }
-    return item;
-  });
-  render();
-}
 
-
-function setEditItem(itemId) {
-  editId = itemId;
-  render(); 
-}
-
-
-function updateItemName(newName) {
-  items = $.map(items, function (item) {
-    if (item.id === editId) {
-      return $.extend({}, item, { name: newName });
+    if (editId) {
+      updateItemName(value);
+    } else {
+      addItem(value);
     }
-    return item;
+
+    $input.val("");
   });
-  editId = null; 
-  render();
-  setTimeout(() => alert("Item Updated Successfully!"), 0);
+
+  return $form;
 }
-
-
-function render() {
-  var $app = $("#app");
-  $app.empty();
-
-
-  var itemToEdit = editId 
-    ? items.find(function(i) { return i.id === editId; }) 
-    : null;
-
- 
-  var $formElement = createForm(editId, itemToEdit);
-  var $itemsElement = createItems(items);
-
-  $app.append($formElement);
-  $app.append($itemsElement);
-}
-
-$(document).ready(function () {
-  render();
-});

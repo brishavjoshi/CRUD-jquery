@@ -1,36 +1,30 @@
-// Create SingleItem Element
 function createSingleItem(item) {
-  var $div = $('<div class="single-item"></div>');
+  var $div = $('<div class="single_item"></div>');
 
-  // 1. Template with dynamic classes/styles
   $div.html(`
-    <input type="checkbox" ${item.completed ? "checked" : ""} />
-    <p style="text-decoration: ${item.completed ? "line-through" : "none"}">
-      ${item.name}
-    </p>
-    <div class="btn-container">
-      <button class="btn icon-btn edit-btn" type="button">
-        <i class="fa-regular fa-pen-to-square"></i>
-      </button>
-      <button class="btn icon-btn remove-btn" type="button">
-        <i class="fa-regular fa-trash-can"></i>
-      </button>
-    </div>
-  `);
+        <input type="checkbox" ${item.completed ? "checked" : ""}/>
+        <p style="text-decoration: ${item.completed ? "line-through" : "none"}">${item.name}
+        </p>
+        <button class = "btn icon-btn edit-btn" type = "button">
+            <i class = "fa-regular fa-pen-to-square"></i>
+        </button>
+        <button class="btn icon-btn remove-btn" type = "button">
+        <i class = "fa-regular fa-trash-can"></i>
+        </button>        
+        `);
 
-  // 2. Event: Checkbox Toggle (Completed)
+  // Add event listener for checkbox
   $div.find('input[type="checkbox"]').on("change", function () {
     editCompleted(item.id);
   });
 
-  // 3. Event: Edit Button (Switch to Edit Mode)
-  $div.find(".edit-btn").on("click", function () {
-    setEditId(item.id);
-  });
-
-  // 4. Event: Remove Button (Delete)
+  // Add event listener for remove button
   $div.find(".remove-btn").on("click", function () {
     removeItem(item.id);
+  });
+
+  $div.find(".edit-btn").on("click", function () {
+    setEditId(item.id);
   });
 
   return $div;

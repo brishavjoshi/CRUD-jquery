@@ -1,57 +1,57 @@
-// 1. Local Storage Helpers
+//var items = groceryItems;
 function getLocalStorage() {
   var list = localStorage.getItem("grocery-list");
-  return list ? JSON.parse(list) : [];
+  if (list) {
+    return JSON.parse(list);
+  }
+  return [];
 }
 
 function setLocalStorage(itemsArray) {
   localStorage.setItem("grocery-list", JSON.stringify(itemsArray));
 }
+var items = getLocalStorage();
+var editId = null;
 
-// 2. Initial State
-var items = getLocalStorage(); // Initialize from LocalStorage
-var editId = null;             // Tracks the ID of the item being edited
+function render() {
+  var $app = $("#app");
+  $app.empty();
 
-// 3. Helper: Generate unique ID
+  var itemToEdit = editId
+    ? $.grep(items, function (item) {
+        return item.id === editId;
+      })[0]
+    : null;
+  var $formElement = createForm(editId, itemToEdit);
+  var $itemsElement = createItems(items);
+
+  $app.append($formElement);
+  $app.append($itemsElement);
+}
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// 4. Logic: Add Item
+$(document).ready(function () {
+  render();
+});
+
+// Add Item Function
 function addItem(itemName) {
   var newItem = {
     name: itemName,
     completed: false,
     id: generateId(),
   };
-  
   items.push(newItem);
-  setLocalStorage(items); // Sync with LocalStorage
+  setLocalStorage(items);
   render();
-  
-  setTimeout(function () {
-    alert("Item Added Successfully!");
-  }, 0);
+  // setTimeout(function () {
+  //   alert("Item Added Successfully!");
+  // }, 0);
 }
 
-// 5. Logic: Remove Item
-function removeItem(itemId) {
-  items = $.grep(items, function (item) {
-    return item.id !== itemId;
-  });
-  
-  // If we delete the item currently being edited, reset editId
-  if (editId === itemId) editId = null;
-  
-  setLocalStorage(items); // Sync with LocalStorage
-  render();
-  
-  setTimeout(function () {
-    alert("Item Deleted Successfully!");
-  }, 0);
-}
-
-// 6. Logic: Toggle Completed Status
+// Edit Completed Function
 function editCompleted(itemId) {
   items = $.map(items, function (item) {
     if (item.id === itemId) {
@@ -59,17 +59,22 @@ function editCompleted(itemId) {
     }
     return item;
   });
-  
-  setLocalStorage(items); // Sync with LocalStorage
+  setLocalStorage(items);
   render();
 }
-
-// 7. Logic: Set/Update Name (Edit Mode)
-function setEditId(itemId) {
-  editId = itemId;
-  render(); // Re-render to populate the form with item data
+//Remove item
+function removeItem(itemId) {
+  items = $.grep(items, function (item) {
+    return item.id !== itemId;
+  });
+  setLocalStorage(items);
+  render();
+  // setTimeout(function () {
+  //   alert("Item Deleted Successfully!");
+  // }, 0);
 }
 
+// Update Item Name Function
 function updateItemName(newName) {
   items = $.map(items, function (item) {
     if (item.id === editId) {
@@ -77,36 +82,21 @@ function updateItemName(newName) {
     }
     return item;
   });
-  
-  editId = null; // Exit edit mode
-  setLocalStorage(items); // Sync with LocalStorage
+  editId = null;
+  setLocalStorage(items);
   render();
-  
+  // setTimeout(function () {
+  //   alert("Item Updated Successfully!");
+  // }, 0);
+}
+
+// Set Edit ID Function
+function setEditId(itemId) {
+  editId = itemId;
+  render();
+
+  // Focus input after render
   setTimeout(function () {
-    alert("Item Updated Successfully!");
+    $(".form-input").focus();
   }, 0);
 }
-
-// 8. UI: Render App
-function render() {
-  var $app = $("#app");
-  $app.empty(); // Clear existing DOM
-
-  // Find the item object if we are in edit mode
-  var itemToEdit = editId 
-    ? items.find(function(i) { return i.id === editId; }) 
-    : null;
-
-  // Generate components
-  var $formElement = createForm(editId, itemToEdit);
-  var $itemsElement = createItems(items);
-
-  // Inject into the DOM
-  $app.append($formElement);
-  $app.append($itemsElement);
-}
-
-// 9. Initialize: Wait for Document Ready
-$(document).ready(function () {
-  render();
-});

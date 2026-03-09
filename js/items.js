@@ -1,4 +1,3 @@
-// Create Items Container
 function createItems(itemsArray) {
   var $container = $('<div class="items"></div>');
 
